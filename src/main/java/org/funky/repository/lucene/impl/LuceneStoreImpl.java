@@ -24,7 +24,6 @@ public class LuceneStoreImpl implements LuceneStore, InitializingBean {
     private static final int MAX_DOC = 1000;
     private final IndexWriterFactory indexWriterFactory;
     private final IndexReaderFactory indexReaderFactory;
-    private IndexWriter indexWriter;
 
     @Autowired
     public LuceneStoreImpl(IndexWriterFactory indexWriterFactory, IndexReaderFactory indexReaderFactory) {
@@ -98,7 +97,7 @@ public class LuceneStoreImpl implements LuceneStore, InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        indexWriter = indexWriterFactory.createIndexWriter();
+        IndexWriter indexWriter = indexWriterFactory.createIndexWriter();
         try {
             indexWriter.addDocument(new Document());
         } finally {
