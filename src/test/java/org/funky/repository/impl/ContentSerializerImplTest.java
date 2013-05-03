@@ -1,8 +1,8 @@
 package org.funky.repository.impl;
 
 import org.funky.repository.Content;
-import org.funky.repository.StringValue;
-import org.funky.repository.Value;
+import org.funky.repository.StringProperty;
+import org.funky.repository.Property;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -22,11 +22,11 @@ public class ContentSerializerImplTest {
 
     @Test
     public void test__Serialize_And_Unserialize() {
-        Content content = new Content("id", "title", Arrays.asList(new StringValue("key", "value")));
+        Content content = new Content("id", "title", Arrays.<Property>asList(new StringProperty("key", "value")));
         byte[] data = serializer.serialize(content);
         Content result = serializer.unserialize(data);
         assertThat(result, is(content));
-        assertThat(result.get("key"), is((Value) new StringValue("key", "value")));
+        assertThat(result.get("key"), is((Property) new StringProperty("key", "value")));
     }
 
 }

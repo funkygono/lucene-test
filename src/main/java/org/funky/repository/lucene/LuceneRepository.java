@@ -33,8 +33,8 @@ public class LuceneRepository implements Repository {
     @Override
     public void store(Content content) {
         Document document = new Document();
-        for (Value value : content.getValues()) {
-            document.add(fieldBuilder.createFieldForValue(value));
+        for (Property property : content.getProperties()) {
+            document.add(fieldBuilder.createFieldForValue(property));
         }
         document.add(newField(TITLE, content.getTitle()));
         document.add(newField(ID, content.getId()));

@@ -2,8 +2,8 @@ package org.funky.repository.lucene;
 
 import org.funky.repository.Content;
 import org.funky.repository.Repository;
-import org.funky.repository.StringValue;
-import org.funky.repository.Value;
+import org.funky.repository.StringProperty;
+import org.funky.repository.Property;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,20 +24,20 @@ public class LuceneRepositoryIT {
 
     @Test
     public void test__Store_And_Search() {
-        Content content = createSimpleContent("id", "title", new StringValue("name", "funkygono"));
+        Content content = createSimpleContent("id", "title", new StringProperty("name", "funkygono"));
         repository.store(content);
         System.out.println(repository.simpleSearch("funkygono"));
         assertThat(repository.simpleSearch("funkygono"), is(Arrays.asList(content)));
     }
 
-    private Content createSimpleContent(String id, String title, Value value) {
-        return new Content(id, title, Arrays.asList(value));
+    private Content createSimpleContent(String id, String title, Property property) {
+        return new Content(id, title, Arrays.asList(property));
     }
 
     @Test
     public void test__Store_And_Search_2_Times() {
-        Content content1 = createSimpleContent("id1", "title1", new StringValue("name", "value"));
-        Content content2 = createSimpleContent("id2", "title2", new StringValue("name", "value"));
+        Content content1 = createSimpleContent("id1", "title1", new StringProperty("name", "value"));
+        Content content2 = createSimpleContent("id2", "title2", new StringProperty("name", "value"));
         repository.store(content1);
         assertThat(repository.simpleSearch("value"), is(Arrays.asList(content1)));
         repository.store(content2);
@@ -46,9 +46,9 @@ public class LuceneRepositoryIT {
 
     @Test
     public void test__Store_Search_Update_And_Search_Again() throws Exception {
-        Content content = createSimpleContent("id", "title", new StringValue("name", "value1"));
+        Content content = createSimpleContent("id", "title", new StringProperty("name", "value1"));
         repository.store(content);
-        content = createSimpleContent("id", "title", new StringValue("name", "value2"));
+        content = createSimpleContent("id", "title", new StringProperty("name", "value2"));
         repository.store(content);
         assertThat(repository.findById("id"), is(content));
     }

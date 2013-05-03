@@ -1,23 +1,32 @@
 package org.funky.repository;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 public class Content implements Serializable {
 
-    private final List<Value> values;
     private final String id;
     private final String title;
+    private final UUID stamp;
+    private final List<Property> properties;
 
-    public Content(String id, String title, List<? extends Value> values) {
-        this.values = Collections.unmodifiableList(values);
+    public Content(String id, String title, UUID stamp, List<Property> properties) {
+        this.properties = properties;
         this.id = id;
+        this.stamp = stamp;
         this.title = title;
     }
 
-    public Value get(String property) {
-        for (Value value : values) {
+    public Content(String id, String title, List<Property> properties) {
+        this(id, title, UUID.randomUUID(), properties);
+    }
+
+    public Property get(String property) {
+        for (Property value : properties) {
             if (value.getName().equals(property)) {
                 return value;
             }
@@ -25,8 +34,8 @@ public class Content implements Serializable {
         return null;
     }
 
-    public List<Value> getValues() {
-        return values;
+    public List<Property> getProperties() {
+        return properties;
     }
 
     public String getId() {
@@ -37,20 +46,20 @@ public class Content implements Serializable {
         return title;
     }
 
+    public UUID getStamp() {
+        return stamp;
+    }
+
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Content content = (Content) o;
-
-        return !(id != null ? !id.equals(content.id) : content.id != null);
-
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+        Content that = (Content) object;
+        return new EqualsBuilder().append(this.id, that.id).append(this.stamp, that.stamp).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+        return new HashCodeBuilder().append(id).append(stamp).toHashCode();
     }
-
 }

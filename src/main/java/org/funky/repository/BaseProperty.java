@@ -3,12 +3,16 @@ package org.funky.repository;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
-public abstract class BaseValue<T extends Serializable> implements Value {
+/**
+ * Abstract implementation of the {@link Property}.
+ * @param <T> the type of the value
+ */
+public abstract class BaseProperty<T extends Serializable> implements Property {
 
     private final String name;
     private final T value;
 
-    public BaseValue(@NotNull String name, @NotNull T value) {
+    public BaseProperty(@NotNull String name, @NotNull T value) {
         this.name = name;
         this.value = value;
     }
@@ -28,7 +32,7 @@ public abstract class BaseValue<T extends Serializable> implements Value {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        BaseValue that = (BaseValue) o;
+        BaseProperty that = (BaseProperty) o;
 
         return name.equals(that.name) && value.equals(that.value);
 
