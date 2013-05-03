@@ -1,9 +1,10 @@
-package org.funky.repository.lucene.impl;
+package org.funky.repository.lucene.indexer;
 
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.Directory;
 import org.funky.repository.RepositoryException;
+import org.funky.repository.lucene.store.IndexWriterFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

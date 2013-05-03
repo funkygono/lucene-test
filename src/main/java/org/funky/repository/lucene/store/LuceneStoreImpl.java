@@ -1,4 +1,4 @@
-package org.funky.repository.lucene.impl;
+package org.funky.repository.lucene.store;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
@@ -6,8 +6,8 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.*;
 import org.funky.repository.RepositoryException;
-import org.funky.repository.lucene.LuceneRepository;
 import org.funky.repository.lucene.LuceneStore;
+import org.funky.repository.lucene.constants.Fields;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -35,7 +35,7 @@ public class LuceneStoreImpl implements LuceneStore, InitializingBean {
     public void store(Document document) {
         IndexWriter indexWriter = indexWriterFactory.createIndexWriter();
         try {
-            String id = document.get(LuceneRepository.ID);
+            String id = document.get(Fields.ID);
             if (exists(id)) {
                 indexWriter.updateDocument(createByIdTerm(id), document);
             } else {
@@ -50,7 +50,7 @@ public class LuceneStoreImpl implements LuceneStore, InitializingBean {
 
     @Override
     public List<Document> simpleSearch(String text) {
-        return search(new TermQuery(new Term("name", text)));
+        return search(new TermQuery(new Term(Fields.TOKENS, text)));
     }
 
     @Override
@@ -71,7 +71,7 @@ public class LuceneStoreImpl implements LuceneStore, InitializingBean {
     }
 
     private Term createByIdTerm(String id) {
-        return new Term(LuceneRepository.ID, id);
+        return new Term(Fields.ID, id);
     }
 
     private boolean exists(String id) {

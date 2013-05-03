@@ -1,4 +1,4 @@
-package org.funky.repository.lucene.impl;
+package org.funky.repository.lucene.store;
 
 import org.apache.lucene.index.IndexWriter;
 

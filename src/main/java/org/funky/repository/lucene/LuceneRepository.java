@@ -1,53 +1,36 @@
 package org.funky.repository.lucene;
 
 import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.StoredField;
-import org.apache.lucene.document.TextField;
-import org.apache.lucene.index.IndexableField;
-import org.funky.repository.*;
+import org.funky.repository.Content;
+import org.funky.repository.ContentSerializer;
+import org.funky.repository.Repository;
+import org.funky.repository.lucene.constants.Fields;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Implements the {@link Repository} using Lucene to store the search indexes and the content itself.
+ */
 @Component
 public class LuceneRepository implements Repository {
 
-    public static final String TITLE = "$title";
-    public static final String ID = "$id";
-    public static final String CONTENT = "$content";
-
     private final LuceneStore luceneStore;
     private final ContentSerializer contentSerializer;
-    private final FieldBuilder fieldBuilder;
+    private final DocumentBuilder documentBuilder;
 
     @Autowired
-    public LuceneRepository(LuceneStore luceneStore, ContentSerializer contentSerializer, FieldBuilder fieldBuilder) {
+    public LuceneRepository(LuceneStore luceneStore, ContentSerializer contentSerializer, DocumentBuilder documentBuilder) {
         this.luceneStore = luceneStore;
         this.contentSerializer = contentSerializer;
-        this.fieldBuilder = fieldBuilder;
+        this.documentBuilder = documentBuilder;
     }
 
     @Override
     public void store(Content content) {
-        Document document = new Document();
-        for (Property property : content.getProperties()) {
-            document.add(fieldBuilder.createFieldForValue(property));
-        }
-        document.add(newField(TITLE, content.getTitle()));
-        document.add(newField(ID, content.getId()));
-        document.add(newField(CONTENT, content));
-        luceneStore.store(document);
-    }
-
-    private IndexableField newField(String property, Content content) {
-        return new StoredField(property, contentSerializer.serialize(content));
-    }
-
-    private IndexableField newField(String property, String value) {
-        return new TextField(property, value, Field.Store.NO);
+        luceneStore.store(documentBuilder.build(content));
     }
 
     @Override
@@ -55,14 +38,14 @@ public class LuceneRepository implements Repository {
         List<Document> documents = luceneStore.simpleSearch(query);
         List<Content> result = new ArrayList<Content>(documents.size());
         for (Document document : documents) {
-            result.add(contentSerializer.unserialize(document.getBinaryValue(CONTENT).bytes));
+            result.add(contentSerializer.unserialize(document.getBinaryValue(Fields.CONTENT).bytes));
         }
         return result;
     }
 
     @Override
     public Content findById(String id) {
-        return contentSerializer.unserialize(luceneStore.findById(id).getBinaryValue(CONTENT).bytes);
+        return contentSerializer.unserialize(luceneStore.findById(id).getBinaryValue(Fields.CONTENT).bytes);
     }
 
 }
