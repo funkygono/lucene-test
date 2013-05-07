@@ -14,7 +14,7 @@ public class IdFieldBuilder implements FieldBuilder {
 
     @Override
     public Field build(Content content) {
-        return new TextField(Fields.ID, content.getId(), Field.Store.YES);
+        return new TextField(Fields.ID, content.getId(), Field.Store.NO);
     }
 
 }

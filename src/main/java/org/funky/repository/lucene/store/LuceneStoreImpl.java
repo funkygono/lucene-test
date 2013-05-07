@@ -8,6 +8,8 @@ import org.apache.lucene.search.*;
 import org.funky.repository.RepositoryException;
 import org.funky.repository.lucene.LuceneStore;
 import org.funky.repository.lucene.constants.Fields;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -21,6 +23,7 @@ import static org.apache.commons.io.IOUtils.closeQuietly;
 @Component
 public class LuceneStoreImpl implements LuceneStore, InitializingBean {
 
+    private static final Logger logger = LoggerFactory.getLogger(LuceneStoreImpl.class);
     private static final int MAX_DOC = 1000;
     private final IndexWriterFactory indexWriterFactory;
     private final IndexReaderFactory indexReaderFactory;
@@ -37,8 +40,10 @@ public class LuceneStoreImpl implements LuceneStore, InitializingBean {
         try {
             String id = document.get(Fields.ID);
             if (exists(id)) {
+                logger.info("Updating document: {}", document);
                 indexWriter.updateDocument(createByIdTerm(id), document);
             } else {
+                logger.info("Adding document: {}", document);
                 indexWriter.addDocument(document);
             }
         } catch (IOException e) {
